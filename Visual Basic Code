@@ -1,0 +1,1593 @@
+Imports System.IO
+Public Class Form1
+Private i, j, k, t, z, total As Long
+Private XDivisions() As String
+Private XPictures() As String
+Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+i = 0
+j = 0
+t = 0
+TextBox1.Text = ""
+FileOpen(1, "Divisions.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve XDivisions(0 To i)
+Input(1, XDivisions(i))
+ListBox1.Items.Add(XDivisions(i))
+i = i + 1
+Loop
+FileClose(1)
+FileOpen(2, "Pictures1.csv", OpenMode.Input)
+Do Until EOF(2)
+ReDim Preserve XPictures(0 To j)
+Input(2, XPictures(j))
+j = j + 1
+Loop
+total = j
+FileClose(2)
+Timer1.Start()
+Call Display(0)
+FileOpen(3, "CartPerCustomer.csv", OpenMode.Append)
+FileClose(3)
+Dim a As String
+a = CurDir()
+My.Computer.FileSystem.DeleteFile(a & "\CartPerCustomer.csv")
+End Sub
+Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+t = t + 1
+If t Mod 3 = 0 Then
+Call Display(0)
+ElseIf t Mod 3 = 1 Then
+Call Display(1)
+ElseIf t Mod 3 = 2 Then
+Call Display(2)
+End If
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+If TextBox1.Text = "123" And ListBox1.Text = "Customer" Then
+Form2.Show()
+Me.Hide()
+ElseIf TextBox1.Text = "456" And ListBox1.Text = "Employeer" Then
+Me.Hide()
+Form11.Show()
+ElseIf TextBox1.Text = "789" And ListBox1.Text = "Supplier" Then
+Me.Hide()
+Form18.Show()
+ElseIf TextBox1.Text = "159" And ListBox1.Text = "Shipper" Then
+Me.Hide()
+Form19.Show()
+Else
+MsgBox("Incorrect Password or Divsion")
+End If
+End Sub
+Private Sub Display(ByVal A As Long)
+PictureBox1.Load(XPictures(A))
+End Sub
+End Class
+Public Class Form2
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Me.Close()
+Form3.Show()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Me.Close()
+Form4.Show()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Me.Close()
+Form5.Show()
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+Me.Close()
+Form6.Show()
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Dim a As String
+a = CurDir()
+My.Computer.FileSystem.DeleteFile(a & "\CartPerCustomer.csv")
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Append)
+FileClose(1)
+PictureBox1.Load("arm.jpg")
+PictureBox2.Load("conveyor.jpg")
+PictureBox3.Load("motorized front.jpg")
+PictureBox4.Load("manual front.jpg")
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Me.Close()
+Form7.Show()
+End Sub
+End Class
+Public Class Form3
+Private Price As Long
+Private Sub Form3_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.ManufacturingAssembly' table. You can move, or remove it, as
+needed.
+Me.ManufacturingAssemblyTableAdapter1.Fill(Me.ItemsDBDataSet1.ManufacturingAssembly)
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Append)
+End Sub
+Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton1.CheckedChanged
+ManufacturingAssemblyBindingSource1.MoveFirst()
+End Sub
+Private Sub RadioButton2_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton2.CheckedChanged
+ManufacturingAssemblyBindingSource1.Position = 1
+End Sub
+Private Sub RadioButton3_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton3.CheckedChanged
+ManufacturingAssemblyBindingSource1.MoveLast()
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+If NumericUpDown1.Value = 0 Then
+MsgBox("Enter a Quantity")
+Exit Sub
+Else
+Price = TextBox3.Text * NumericUpDown1.Value
+End If
+WriteLine(1, TextBox1.Text, TextBox2.Text, NumericUpDown1.Value, Price)
+NumericUpDown1.Value = 0
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+FileClose(1)
+Me.Close()
+Form7.Show()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+FileClose(1)
+Me.Close()
+Form2.Show()
+End Sub
+End Class
+Public Class Form4
+Private price As Long
+Private totalItemTransportation As Long
+Private Sub Label6_Click(sender As Object, e As EventArgs) Handles Label6.Click
+End Sub
+Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.ItemTransportation' table. You can move, or remove it, as needed.
+Me.ItemTransportationTableAdapter1.Fill(Me.ItemsDBDataSet1.ItemTransportation)
+totalItemTransportation = ItemsDBDataSet1.ItemTransportation.Count
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Append)
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Dim Xposition As Long
+Xposition = ItemTransportationBindingSource1.Position
+If Xposition = totalItemTransportation - 1 Then
+ItemTransportationBindingSource1.MoveFirst()
+Else
+ItemTransportationBindingSource1.MoveNext()
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+If NumericUpDown3.Value = 0 Then
+MsgBox("Enter a amount of meters needed")
+Exit Sub
+Else
+Price = TextBox3.Text * NumericUpDown3.Value
+End If
+WriteLine(1, TextBox1.Text, TextBox2.Text, NumericUpDown3.Value, price)
+NumericUpDown3.Value = 0
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+FileClose(1)
+Me.Close()
+Form7.Show()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+FileClose(1)
+Me.Close()
+Form2.Show()
+End Sub
+Private Sub Label2_Click(sender As Object, e As EventArgs) Handles Label2.Click
+End Sub
+End Class
+Public Class Form5
+Private totalAssistedInventoryHandling As Long
+Private Price As Long
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+FileClose(1)
+Me.Close()
+Form2.Show()
+End Sub
+Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.AssistedInventoryHandling' table. You can move, or remove it, as
+needed.
+Me.AssistedInventoryHandlingTableAdapter1.Fill(Me.ItemsDBDataSet1.AssistedInventoryHandling)
+totalAssistedInventoryHandling = AssistedInventoryHandlingBindingSource1.Count()
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Append)
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Dim Xposition As Long
+Xposition = AssistedInventoryHandlingBindingSource1.Position
+If Xposition = totalAssistedInventoryHandling - 1 Then
+AssistedInventoryHandlingBindingSource1.MoveFirst()
+Else
+AssistedInventoryHandlingBindingSource1.MoveNext()
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+If NumericUpDown3.Value = 0 Then
+MsgBox("Enter a amount of meters needed")
+Exit Sub
+Else
+Price = TextBox3.Text * NumericUpDown3.Value
+End If
+WriteLine(1, TextBox1.Text, TextBox2.Text, NumericUpDown3.Value, Price)
+NumericUpDown3.Value = 0
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+FileClose(1)
+Me.Close()
+Form7.Show()
+End Sub
+Private Sub Label2_Click(sender As Object, e As EventArgs) Handles Label2.Click
+End Sub
+End Class
+Public Class Form6
+Private totalManualInventoryHandling As Long
+Private Price As Long
+Private Sub Form6_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.ManualInventoryHandling' table. You can move, or remove it, as
+needed.
+Me.ManualInventoryHandlingTableAdapter1.Fill(Me.ItemsDBDataSet1.ManualInventoryHandling)
+totalManualInventoryHandling = ManualInventoryHandlingBindingSource1.Count()
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Append)
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Dim Xposition As Long
+Xposition = ManualInventoryHandlingBindingSource1.Position
+If Xposition = totalManualInventoryHandling - 1 Then
+ManualInventoryHandlingBindingSource1.MoveFirst()
+Else
+ManualInventoryHandlingBindingSource1.MoveNext()
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+If NumericUpDown3.Value = 0 Then
+MsgBox("Enter a amount of meters needed")
+Exit Sub
+Else
+Price = TextBox3.Text * NumericUpDown3.Value
+End If
+WriteLine(1, TextBox1.Text, TextBox2.Text, NumericUpDown3.Value, Price)
+NumericUpDown3.Value = 0
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+FileClose(1)
+Me.Close()
+Form7.Show()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+FileClose(1)
+Me.Close()
+Form2.Show()
+End Sub
+End Class
+Public Class Form7
+Private ModelNum() As String
+Private ProdName() As String
+Private ProdQuantity() As Long
+Private ProdPrice() As Long
+Private i, j, total, PriceTotal As Long
+Private CartDisplay As String
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Me.Close()
+Form8.Show()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Me.Close()
+Form2.Show()
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+Dim a As String
+a = CurDir()
+My.Computer.FileSystem.DeleteFile(a & "\CartPerCustomer.csv")
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Me.Close()
+Form10.Show()
+End Sub
+Private Sub Form7_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+Dim D, A As Long
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve ModelNum(0 To i)
+ReDim Preserve ProdName(0 To i)
+ReDim Preserve ProdQuantity(0 To i)
+ReDim Preserve ProdPrice(0 To i)
+Input(1, ModelNum(i))
+Input(1, ProdName(i))
+Input(1, ProdQuantity(i))
+Input(1, ProdPrice(i))
+PriceTotal = PriceTotal + ProdPrice(i)
+CartDisplay = CartDisplay & ModelNum(i) & vbTab & ProdName(i) & vbTab & ProdQuantity(i) & vbTab & ProdPrice(i) &
+vbNewLine & vbNewLine
+i = i + 1
+Loop
+total = i
+FileClose(1)
+' For D = 0 To total - 1
+' For j = 0 To total - 2
+'If ModelNum(j) = ModelNum(j + 1) Then
+'ProdQuantity(j) = ProdQuantity(j) + ProdQuantity(j + 1)
+'ProdPrice(j) = ProdPrice(j) + ProdPrice(j + 1)
+'A = j + 1
+'End If
+'
+'If D <> A Then
+'FileOpen(2, "ReceiptPerCustomer.csv", OpenMode.Output)
+'WriteLine(2, ModelNum(D), ProdName(D), ProdQuantity(D), ProdPrice(D))
+'CartDisplay = CartDisplay & ModelNum(D) & vbTab & ProdName(D) & vbTab & ProdQuantity(D) & vbTab & ProdPrice(D) &
+vbNewLine & vbNewLine
+'FileClose(2)
+'End If
+'Next
+'Next
+' FileClose(1)
+TextBox1.Text = "Modle #" & vbTab & "Product Name" & vbTab & "Quantity" & vbTab & "Price" & vbNewLine & vbNewLine &
+CartDisplay
+If TextBox1.Text = "Modle #" & vbTab & "Product Name" & vbTab & "Quantity" & vbTab & "Price" & vbNewLine & vbNewLine
+Then
+Button1.Enabled = False
+Button2.Enabled = False
+End If
+End Sub
+End Class
+Imports System.Net.Mail
+Public Class Form8
+Private ModelNum() As String
+Private ProdName() As String
+Private ProdQuantity() As String
+Private ProdPrice() As Long
+Private i, j, total, PriceTotal As Long
+Private CartDisplay As String
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Select Case ""
+Case TextBox2.Text, TextBox3.Text, TextBox4.Text, TextBox5.Text
+MsgBox("Missing Information")
+Exit Sub
+End Select
+FileOpen(2, "AllSales.csv", OpenMode.Append)
+FileOpen(3, "SupplierList.csv", OpenMode.Append)
+For i = 0 To total - 1
+WriteLine(2, ModelNum(i), ProdName(i), ProdQuantity(i), ProdPrice(i))
+WriteLine(3, ModelNum(i), ProdName(i), ProdQuantity(i), ProdPrice(i))
+Next
+FileClose(3)
+FileClose(2)
+Dim EmailMessage As New MailMessage()
+Try
+EmailMessage.From = New MailAddress("garzaomar716@gmail.com")
+EmailMessage.To.Add(TextBox4.Text)
+EmailMessage.Subject = "TEST. Not Real Receipt"
+EmailMessage.Body = TextBox1.Text
+Dim SMPT As New SmtpClient("smtp.gmail.com")
+SMPT.Port = 587
+SMPT.EnableSsl = True
+SMPT.Credentials = New System.Net.NetworkCredential("garzaomar716@gmail.com", "a44f2b6f6B")
+SMPT.Send(EmailMessage)
+Catch ex As Exception
+End Try
+Me.Close()
+Form9.Show()
+End Sub
+Private Sub PrintDocument1_PrintPage(sender As Object, e As Printing.PrintPageEventArgs)
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Me.Close()
+Form2.Show()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Dim a As String
+a = CurDir()
+My.Computer.FileSystem.DeleteFile(a & "\CartPerCustomer.csv")
+End Sub
+Private Sub Form8_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve ModelNum(0 To i)
+ReDim Preserve ProdName(0 To i)
+ReDim Preserve ProdQuantity(0 To i)
+ReDim Preserve ProdPrice(0 To i)
+Input(1, ModelNum(i))
+Input(1, ProdName(i))
+Input(1, ProdQuantity(i))
+Input(1, ProdPrice(i))
+CartDisplay = CartDisplay & ModelNum(i) & vbTab & ProdName(i) & vbTab & ProdQuantity(i) & vbTab & ProdPrice(i) &
+vbNewLine & vbNewLine
+PriceTotal = PriceTotal + ProdPrice(i)
+i = i + 1
+Loop
+total = i
+TextBox1.Text = "Modle #" & vbTab & "Product Name" & vbTab & "Quantity" & vbTab & "Price" & vbNewLine & vbNewLine &
+CartDisplay
+FileClose(1)
+End Sub
+End Class
+Public Class Form9
+Private ModelNum() As String
+Private ProdName() As String
+Private ProdQuantity() As String
+Private ProdPrice() As Long
+Private CartDisplay As String
+Private PriceTotal, i As Long
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Dim a As String
+a = CurDir()
+My.Computer.FileSystem.DeleteFile(a & "\CartPerCustomer.csv")
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Dim a As String
+a = CurDir()
+My.Computer.FileSystem.DeleteFile(a & "\CartPerCustomer.csv")
+End
+End Sub
+Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs)
+End Sub
+Private Sub Form9_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve ModelNum(0 To i)
+ReDim Preserve ProdName(0 To i)
+ReDim Preserve ProdQuantity(0 To i)
+ReDim Preserve ProdPrice(0 To i)
+Input(1, ModelNum(i))
+Input(1, ProdName(i))
+Input(1, ProdQuantity(i))
+Input(1, ProdPrice(i))
+CartDisplay = CartDisplay & ModelNum(i) & vbTab & ProdName(i) & vbTab & ProdQuantity(i) & vbTab & ProdPrice(i) &
+vbNewLine & vbNewLine
+PriceTotal = PriceTotal + ProdPrice(i)
+i = i + 1
+Loop
+TextBox1.Text = "Modle #" & vbTab & "Product Name" & vbTab & "Quantity" & vbTab & "Price" & vbNewLine & vbNewLine &
+CartDisplay
+FileClose(1)
+End Sub
+End Class
+Public Class Form10
+Private ModelNum() As String
+Private ProdName() As String
+Private ProdQuantity() As Long
+Private ProdPrice() As Long
+Private i, j, total, PriceTotal As Long
+Private CartDisplay As String
+Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+Dim X As String
+Dim Target, F As Long
+X = InputBox("Enter a record number")
+Target = -1
+For F = 0 To total - 1
+If X = ModelNum(F) Then
+Target = F
+Exit For
+End If
+Next
+If Target = -1 Then
+MsgBox("No such Model Number")
+Else
+Call XDisplay(Target)
+End If
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Call XDisplay(0)
+j = 0
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Call XDisplay(total - 1)
+j = total - 1
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(j + 1)
+j = j + 1
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+If j = 0 Then
+Call XDisplay(total - 1)
+j = total - 1
+Else
+Call XDisplay(j - 1)
+j = j - 1
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Me.Close()
+Form2.Show()
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Call XSave(j)
+Call Form10_Load(sender, e)
+j = j - 1
+If j = total - 1 Then
+Call XDisplay(0)
+Else
+Call XDisplay(total - 1)
+End If
+Me.Close()
+Form7.Show()
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+Dim PricePerQuantity As Long
+Dim k As Long
+k = 1
+If k Mod 2 = 1 Then
+PricePerQuantity = ProdPrice(j) / ProdQuantity(j)
+End If
+If Button7.Text = "Modify" Then
+Call XDisable()
+Button7.Text = "Save"
+Button7.Enabled = True
+TextBox3.ReadOnly = False
+Else
+ModelNum(j) = TextBox1.Text
+ProdName(j) = TextBox2.Text
+ProdQuantity(j) = TextBox3.Text
+ProdPrice(j) = CInt(TextBox3.Text) * PricePerQuantity
+Call Xable()
+Button7.Text = "Modify"
+Call XSave(-1)
+TextBox3.ReadOnly = True
+End If
+k = k + 1
+End Sub
+Private Sub Form10_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+FileOpen(1, "CartPerCustomer.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve ModelNum(0 To i)
+ReDim Preserve ProdName(0 To i)
+ReDim Preserve ProdQuantity(0 To i)
+ReDim Preserve ProdPrice(0 To i)
+Input(1, ModelNum(i))
+Input(1, ProdName(i))
+Input(1, ProdQuantity(i))
+Input(1, ProdPrice(i))
+i = i + 1
+Loop
+FileClose(1)
+total = i
+If ModelNum(0) = Nothing Then
+Call XDisable()
+Button9.Enabled = True
+Else
+Call XDisplay(0)
+End If
+End Sub
+Private Sub XDisplay(ByVal A As Long)
+TextBox1.Text = ModelNum(A)
+TextBox2.Text = ProdName(A)
+TextBox3.Text = ProdQuantity(A)
+TextBox4.Text = ProdPrice(A)
+End Sub
+Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+Me.Close()
+Form7.Show()
+End Sub
+Private Sub XSave(ByVal A As Long)
+Dim D As Long
+FileOpen(5, "CartPerCustomer.csv", OpenMode.Output)
+For D = 0 To total - 1
+If D <> A Then
+WriteLine(5, ModelNum(D), ProdName(D), ProdQuantity(D), ProdPrice(D))
+End If
+Next
+FileClose(5)
+End Sub
+Private Sub XDisable()
+Button1.Enabled = False
+Button2.Enabled = False
+Button3.Enabled = False
+Button4.Enabled = False
+Button5.Enabled = False
+Button6.Enabled = False
+Button7.Enabled = False
+Button8.Enabled = False
+Button9.Enabled = False
+'Button10.Enabled = False
+End Sub
+Private Sub Xable()
+Button1.Enabled = True
+Button2.Enabled = True
+Button3.Enabled = True
+Button4.Enabled = True
+Button5.Enabled = True
+Button6.Enabled = True
+Button7.Enabled = True
+Button8.Enabled = True
+Button9.Enabled = True
+' Button10.Enabled = True
+End Sub
+End Class
+Public Class Form11
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+If RadioButton1.Checked = True Then
+Me.Close()
+Form17.Show()
+ElseIf RadioButton2.Checked = True Then
+Me.Close()
+Form12.Show()
+End If
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Form11_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Me.Close()
+form20.Show()
+End Sub
+End Class
+Public Class Form12
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+If RadioButton1.Checked = False And RadioButton2.Checked = False And RadioButton3.Checked = False And
+RadioButton4.Checked = False Then
+MsgBox("Choose Appropriate Group")
+Exit Sub
+End If
+Select Case True
+Case RadioButton1.Checked
+Me.Close()
+Form13.Show()
+Case RadioButton2.Checked
+Me.Close()
+Form14.Show()
+Case RadioButton3.Checked
+Me.Close()
+Form15.Show()
+Case RadioButton4.Checked
+Me.Close()
+Form16.Show()
+End Select
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Me.Close()
+Form11.Show()
+End Sub
+Private Sub Form12_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+End Sub
+End Class
+Public Class Form13
+Private totalManufacturingAssembly, k As Long
+Private Sub Form13_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.ManufacturingAssembly' table. You can move, or remove it, as
+needed.
+Me.ManufacturingAssemblyTableAdapter1.Fill(Me.ItemsDBDataSet1.ManufacturingAssembly)
+totalManufacturingAssembly = ManufacturingAssemblyBindingSource1.Count
+k = 1
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+ManufacturingAssemblyBindingSource1.MoveFirst()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+ManufacturingAssemblyBindingSource1.MoveLast()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Dim Xposition As Long
+Xposition = ManufacturingAssemblyBindingSource1.Position
+If Xposition = totalManufacturingAssembly - 1 Then
+ManufacturingAssemblyBindingSource1.MoveFirst()
+Else
+ManufacturingAssemblyBindingSource1.MoveNext()
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+Dim Xposition As Long
+Xposition = ManufacturingAssemblyBindingSource1.Position
+If Xposition = 0 Then
+ManufacturingAssemblyBindingSource1.MoveLast()
+Else
+ManufacturingAssemblyBindingSource1.MovePrevious()
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Validate()
+ManufacturingAssemblyBindingSource1.EndEdit()
+Me.ManufacturingAssemblyTableAdapter1.Update(ItemsDBDataSet1.ManufacturingAssembly)
+End Sub
+Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+Me.Close()
+Form12.Show()
+End Sub
+Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+End
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Dim user, key As String
+Dim j, target As Long
+user = InputBox("Enter record number")
+target = -1
+For j = 0 To totalManufacturingAssembly - 1
+key = ItemsDBDataSet1.ManufacturingAssembly(j).ModelNumber
+If user = key Then
+target = j
+Exit For
+End If
+Next
+ManufacturingAssemblyBindingSource1.Position = j
+If target = -1 Then
+MsgBox("No such ID")
+ManufacturingAssemblyBindingSource1.MoveFirst()
+End If
+End Sub
+End Class
+Public Class Form14
+Private totalItemTransportation As Long
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Validate()
+ItemTransportationBindingSource.EndEdit() 'Validates the entry
+Me.ItemTransportationTableAdapter.Update(ItemsDBDataSet1.ItemTransportation)
+End Sub
+Private Sub Form14_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.ItemTransportation' table. You can move, or remove it, as needed.
+Me.ItemTransportationTableAdapter.Fill(Me.ItemsDBDataSet1.ItemTransportation)
+totalItemTransportation = ItemTransportationBindingSource.Count()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Dim Xposition As Long
+Xposition = ItemTransportationBindingSource.Position
+If Xposition = totalItemTransportation - 1 Then
+ItemTransportationBindingSource.MoveFirst()
+Else
+ItemTransportationBindingSource.MoveNext()
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+Dim Xposition As Long
+Xposition = ItemTransportationBindingSource.Position
+If Xposition = 0 Then
+ItemTransportationBindingSource.MoveLast()
+Else
+ItemTransportationBindingSource.MovePrevious()
+End If
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+ItemTransportationBindingSource.MoveFirst()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+ItemTransportationBindingSource.MoveLast()
+End Sub
+Private Sub XDisable()
+Select Case False
+Case Button1.Enabled
+Case Button2.Enabled
+Case Button3.Enabled
+Case Button4.Enabled
+Case Button5.Enabled
+Case Button6.Enabled
+Case Button7.Enabled
+Case Button8.Enabled
+' Case Button9.Enabled
+End Select
+End Sub
+Private Sub XAble()
+Select Case True
+Case Button1.Enabled
+Case Button2.Enabled
+Case Button3.Enabled
+Case Button4.Enabled
+Case Button5.Enabled
+Case Button6.Enabled
+Case Button7.Enabled
+Case Button8.Enabled
+' Case Button9.Enabled
+End Select
+End Sub
+Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+ItemTransportationBindingSource.RemoveCurrent()
+ItemTransportationTableAdapter.Update(ItemsDBDataSet1.ItemTransportation)
+totalItemTransportation = totalItemTransportation - 1
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Dim user, key As String
+Dim j, target As Long
+user = InputBox("Enter record number")
+target = -1
+For j = 0 To totalItemTransportation - 1
+key = ItemsDBDataSet1.ItemTransportation(j).ModelNumber
+If user = key Then
+target = j
+Exit For
+End If
+Next
+ItemTransportationBindingSource.Position = j
+If target = -1 Then
+MsgBox("No such ID")
+ItemTransportationBindingSource.MoveFirst()
+End If
+End Sub
+Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+Me.Close()
+Form12.Show()
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+If Button7.Text = "Add" Then
+ItemTransportationBindingSource.AddNew()
+Call XDisable()
+Button7.Enabled = True
+Button7.Text = "Save"
+Else
+ItemTransportationBindingSource.EndEdit()
+ItemTransportationTableAdapter.Update(Me.ItemsDBDataSet1.ItemTransportation)
+Call XAble()
+Button7.Text = "Add"
+totalItemTransportation = totalItemTransportation + 1
+End If
+End Sub
+Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+End
+End Sub
+End Class
+Public Class Form15
+Private totalAssitedInventoryHandling As Long
+Private Sub Form15_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.AssistedInventoryHandling' table. You can move, or remove it, as
+needed.
+Me.AssistedInventoryHandlingTableAdapter1.Fill(Me.ItemsDBDataSet1.AssistedInventoryHandling)
+totalAssitedInventoryHandling = AssistedInventoryHandlingBindingSource1.Count()
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+AssistedInventoryHandlingBindingSource1.MoveFirst()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+AssistedInventoryHandlingBindingSource1.MoveLast()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Dim Xposition As Long
+Xposition = AssistedInventoryHandlingBindingSource1.Position
+If Xposition = totalAssitedInventoryHandling - 1 Then
+AssistedInventoryHandlingBindingSource1.MoveFirst()
+Else
+AssistedInventoryHandlingBindingSource1.MoveNext()
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+Dim Xposition As Long
+Xposition = AssistedInventoryHandlingBindingSource1.Position
+If Xposition = 0 Then
+AssistedInventoryHandlingBindingSource1.MoveLast()
+Else
+AssistedInventoryHandlingBindingSource1.MovePrevious()
+End If
+End Sub
+Private Sub XDisable()
+Select Case False
+Case Button1.Enabled
+Case Button2.Enabled
+Case Button3.Enabled
+Case Button4.Enabled
+Case Button5.Enabled
+Case Button6.Enabled
+Case Button7.Enabled
+Case Button8.Enabled
+' Case Button9.Enabled
+End Select
+End Sub
+Private Sub XAble()
+Select Case True
+Case Button1.Enabled
+Case Button2.Enabled
+Case Button3.Enabled
+Case Button4.Enabled
+Case Button5.Enabled
+Case Button6.Enabled
+Case Button7.Enabled
+Case Button8.Enabled
+' Case Button9.Enabled
+End Select
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Dim user, key As String
+Dim j, target As Long
+user = InputBox("Enter record number")
+target = -1
+For j = 0 To totalAssitedInventoryHandling - 1
+key = ItemsDBDataSet1.AssistedInventoryHandling(j).ModelNumber
+If user = key Then
+target = j
+Exit For
+End If
+Next
+AssistedInventoryHandlingBindingSource1.Position = j
+If target = -1 Then
+MsgBox("No such ID")
+AssistedInventoryHandlingBindingSource1.MoveFirst()
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Validate()
+AssistedInventoryHandlingBindingSource1.EndEdit() 'Validates the entry
+Me.AssistedInventoryHandlingTableAdapter1.Update(ItemsDBDataSet1.AssistedInventoryHandling)
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+If Button7.Text = "Add" Then
+AssistedInventoryHandlingBindingSource1.AddNew()
+Call XDisable()
+Button7.Enabled = True
+Button7.Text = "Save"
+Else
+AssistedInventoryHandlingBindingSource1.EndEdit()
+AssistedInventoryHandlingTableAdapter1.Update(Me.ItemsDBDataSet1.AssistedInventoryHandling)
+Call XAble()
+Button7.Text = "Add"
+totalAssitedInventoryHandling = totalAssitedInventoryHandling + 1
+End If
+End Sub
+Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+AssistedInventoryHandlingBindingSource1.RemoveCurrent()
+AssistedInventoryHandlingTableAdapter1.Update(ItemsDBDataSet1.AssistedInventoryHandling)
+totalAssitedInventoryHandling = totalAssitedInventoryHandling - 1
+End Sub
+Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+Me.Close()
+Form12.Show()
+End Sub
+Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+End
+End Sub
+Private Sub Label5_Click(sender As Object, e As EventArgs)
+End Sub
+End Class
+Public Class Form16
+Private totalManualInventoryHandling As Long
+Private Sub Form16_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+'TODO: This line of code loads data into the 'ItemsDBDataSet1.ManualInventoryHandling' table. You can move, or remove it, as
+needed.
+Me.ManualInventoryHandlingTableAdapter1.Fill(Me.ItemsDBDataSet1.ManualInventoryHandling)
+totalManualInventoryHandling = ManualInventoryHandlingBindingSource1.Count
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+ManualInventoryHandlingBindingSource1.MoveFirst()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+ManualInventoryHandlingBindingSource1.MoveLast()
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Dim Xposition As Long
+Xposition = ManualInventoryHandlingBindingSource1.Position
+If Xposition = totalManualInventoryHandling - 1 Then
+ManualInventoryHandlingBindingSource1.MoveFirst()
+Else
+ManualInventoryHandlingBindingSource1.MoveNext()
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+Dim Xposition As Long
+Xposition = ManualInventoryHandlingBindingSource1.Position
+If Xposition = 0 Then
+ManualInventoryHandlingBindingSource1.MoveLast()
+Else
+ManualInventoryHandlingBindingSource1.MovePrevious()
+End If
+End Sub
+Private Sub XDisable()
+Select Case False
+Case Button1.Enabled
+Case Button2.Enabled
+Case Button3.Enabled
+Case Button4.Enabled
+Case Button5.Enabled
+Case Button6.Enabled
+Case Button7.Enabled
+Case Button8.Enabled
+' Case Button9.Enabled
+End Select
+End Sub
+Private Sub XAble()
+Select Case True
+Case Button1.Enabled
+Case Button2.Enabled
+Case Button3.Enabled
+Case Button4.Enabled
+Case Button5.Enabled
+Case Button6.Enabled
+Case Button7.Enabled
+Case Button8.Enabled
+' Case Button9.Enabled
+End Select
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Validate()
+ManualInventoryHandlingBindingSource1.EndEdit() 'Validates the entry
+Me.ManualInventoryHandlingTableAdapter1.Update(ItemsDBDataSet1.ManualInventoryHandling)
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+If Button7.Text = "Add" Then
+ManualInventoryHandlingBindingSource1.AddNew()
+Call XDisable()
+Button7.Enabled = True
+Button7.Text = "Save"
+Else
+ManualInventoryHandlingBindingSource1.EndEdit()
+ManualInventoryHandlingTableAdapter1.Update(Me.ItemsDBDataSet1.ManualInventoryHandling)
+Call XAble()
+Button7.Text = "Add"
+totalManualInventoryHandling = totalManualInventoryHandling + 1
+End If
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Dim user, key As String
+Dim j, target As Long
+user = InputBox("Enter record number")
+target = -1
+For j = 0 To totalManualInventoryHandling - 1
+key = ItemsDBDataSet1.ManualInventoryHandling(j).ModelNumber
+If user = key Then
+target = j
+Exit For
+End If
+Next
+ManualInventoryHandlingBindingSource1.Position = j
+If target = -1 Then
+MsgBox("No such ID")
+ManualInventoryHandlingBindingSource1.MoveFirst()
+End If
+End Sub
+Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+ManualInventoryHandlingBindingSource1.RemoveCurrent()
+ManualInventoryHandlingTableAdapter1.Update(ItemsDBDataSet1.ManualInventoryHandling)
+totalManualInventoryHandling = totalManualInventoryHandling - 1
+End Sub
+Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+Me.Close()
+Form12.Show()
+End Sub
+Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+End
+End Sub
+End Class
+Public Class Form17
+Private ModelNum() As String
+Private ProdName() As String
+Private ProdQuantity() As String
+Private ProdPrice() As String
+Private i, j, k, total As Long
+Private CartDisplay As String
+Private Sub Form17_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+Dim a As String
+a = CurDir()
+i = 0
+If System.IO.File.Exists(a & "\AllSales.csv") Then
+If System.IO.File.ReadAllText(a & "\AllSales.csv").Length = 0 Then
+MsgBox("All Sales file is empty")
+Call XDisable()
+Button9.Enabled = True
+Button10.Enabled = True
+TextBox1.Text = ""
+TextBox2.Text = ""
+TextBox3.Text = ""
+TextBox4.Text = ""
+Exit Sub
+Else
+FileOpen(1, "AllSales.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve ModelNum(0 To i)
+ReDim Preserve ProdName(0 To i)
+ReDim Preserve ProdQuantity(0 To i)
+ReDim Preserve ProdPrice(0 To i)
+Input(1, ModelNum(i))
+Input(1, ProdName(i))
+Input(1, ProdQuantity(i))
+Input(1, ProdPrice(i))
+i = i + 1
+Loop
+FileClose(1)
+total = i
+Call XDisplay(0)
+End If
+Else
+MsgBox("No sales have been made")
+Call XDisable()
+Button9.Enabled = True
+Button10.Enabled = True
+Exit Sub
+End If
+End Sub
+Private Sub XDisable()
+Button1.Enabled = False
+Button2.Enabled = False
+Button3.Enabled = False
+Button4.Enabled = False
+Button5.Enabled = False
+Button6.Enabled = False
+Button7.Enabled = False
+Button8.Enabled = False
+Button9.Enabled = False
+Button10.Enabled = False
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Call XDisplay(0)
+j = 0
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+Call XDisplay(total - 1)
+j = total - 1
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(j + 1)
+j = j + 1
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+If j = 0 Then
+Call XDisplay(total - 1)
+j = total - 1
+Else
+Call XDisplay(j - 1)
+j = j - 1
+End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+If Button5.Text = "Modify" Then
+Call XDisable()
+Button5.Text = "Save"
+Button5.Enabled = True
+Else
+ModelNum(j) = TextBox1.Text
+ProdName(j) = TextBox2.Text
+ProdQuantity(j) = TextBox3.Text
+ProdPrice(j) = TextBox4.Text
+Call Xable()
+Button5.Text = "Modify"
+Call XSave(-1)
+End If
+End Sub
+Private Sub Xable()
+Button1.Enabled = True
+Button2.Enabled = True
+Button3.Enabled = True
+Button4.Enabled = True
+Button5.Enabled = True
+Button6.Enabled = True
+Button7.Enabled = True
+Button8.Enabled = True
+Button9.Enabled = True
+Button10.Enabled = True
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+If Button7.Text = "Add" Then
+Call XDisable()
+Button7.Enabled = True
+Button7.Text = "Save"
+Else
+FileOpen(50, "AllSales.csv", OpenMode.Append)
+WriteLine(50, TextBox1.Text, TextBox2.Text, TextBox3.Text, TextBox4.Text)
+FileClose(50)
+Call Form17_Load(sender, e)
+Call XDisplay(total - 1)
+Call Xable()
+Button7.Text = "Add"
+j = j + 1
+End If
+End Sub
+Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+Call XSave(j)
+Call Form17_Load(sender, e)
+If i <= 0 Then
+Call XDisable()
+Button9.Enabled = True
+Button10.Enabled = True
+TextBox1.Text = ""
+TextBox2.Text = ""
+TextBox3.Text = ""
+TextBox4.Text = ""
+Exit Sub
+Else
+j = j - 1
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(total - 1)
+j = total - 1
+End If
+End If
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Dim X As String
+Dim Target, F As Long
+X = InputBox("Enter a record number")
+Target = -1
+For F = 0 To total - 1
+If X = ModelNum(F) Then
+Target = F
+Exit For
+End If
+Next
+If Target = -1 Then
+MsgBox("No such Model Number")
+Else
+Call XDisplay(Target)
+End If
+End Sub
+Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+Dim h As Long
+If i <= 0 Then
+Me.Close()
+Form11.Show()
+Exit Sub
+Else
+FileOpen(15, "SupplierList.csv", OpenMode.Output)
+For h = 0 To total - 1
+WriteLine(15, ModelNum(h), ProdName(h), ProdQuantity(h), ProdPrice(h))
+Next
+FileClose(15)
+End If
+Me.Close()
+Form11.Show()
+End Sub
+Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+Dim h As Long
+If i <= 0 Then
+End
+Exit Sub
+Else
+FileOpen(15, "SupplierList.csv", OpenMode.Output)
+For h = 0 To total - 1
+WriteLine(15, ModelNum(h), ProdName(h), ProdQuantity(h), ProdPrice(h))
+Next
+FileClose(15)
+End If
+End
+End Sub
+Private Sub XDisplay(ByVal A As Long)
+TextBox1.Text = ModelNum(A)
+TextBox2.Text = ProdName(A)
+TextBox3.Text = ProdQuantity(A)
+TextBox4.Text = ProdPrice(A)
+End Sub
+Private Sub XSave(ByVal A As Long)
+Dim D As Long
+FileOpen(5, "AllSales.csv", OpenMode.Output)
+For D = 0 To total - 1
+If D <> A Then
+WriteLine(5, ModelNum(D), ProdName(D), ProdQuantity(D), ProdPrice(D))
+End If
+Next
+FileClose(5)
+End Sub
+End Class
+Public Class Form18
+Private SModelNum() As String
+Private SProdName() As String
+Private SProdQuantity() As String
+Private SProdPrice() As String
+Private i, j, k, z, total As Long
+Private Sub Form18_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+Dim a As String
+a = CurDir()
+z = 0
+If System.IO.File.Exists(a & "\SupplierList.csv") Then
+If System.IO.File.ReadAllText(a & "\SupplierList.csv").Length = 0 Then
+MsgBox("Supplier file is empty")
+Call XDisable()
+Button6.Enabled = True
+TextBox1.Text = ""
+TextBox2.Text = ""
+TextBox3.Text = ""
+Exit Sub
+Else
+FileOpen(5, "SupplierList.csv", OpenMode.Input)
+Do Until EOF(5)
+ReDim Preserve SModelNum(0 To z)
+ReDim Preserve SProdName(0 To z)
+ReDim Preserve SProdQuantity(0 To z)
+ReDim Preserve SProdPrice(0 To z)
+Input(5, SModelNum(z))
+Input(5, SProdName(z))
+Input(5, SProdQuantity(z))
+Input(5, SProdPrice(z))
+z = z + 1
+Loop
+total = z
+Call XDisplay(0)
+End If
+Else
+MsgBox("No items in the suppliers list")
+Call XDisable()
+Button6.Enabled = True
+Exit Sub
+End If
+FileClose(5)
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Call XDisplay(0)
+j = 0
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(j + 1)
+j = j + 1
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+If j = 0 Then
+Call XDisplay(total - 1)
+j = total - 1
+Else
+Call XDisplay(j - 1)
+j = j - 1
+End If
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Dim K As Long
+Dim Num() As String
+Dim Name() As String
+Dim Quantity() As String
+Dim SentToShipperDisplay As String
+FileOpen(2, "ItemsSentToShipper.csv", OpenMode.Append)
+WriteLine(2, TextBox1.Text, TextBox2.Text, TextBox3.Text)
+FileClose(2)
+FileOpen(4, "ItemsSentToShipper.csv", OpenMode.Input)
+Do Until EOF(4)
+ReDim Preserve Num(0 To K)
+ReDim Preserve Name(0 To K)
+ReDim Preserve Quantity(0 To K)
+Input(4, Num(K))
+Input(4, Name(K))
+Input(4, Quantity(K))
+SentToShipperDisplay = SentToShipperDisplay & Num(K) & vbTab & Name(K) & vbTab & Quantity(K) & vbNewLine
+K = K + 1
+Loop
+TextBox4.Text = SentToShipperDisplay
+FileClose(4)
+Call XSave(j)
+Call Form18_Load(sender, e)
+If z <= 0 Then
+Call XDisable()
+Button6.Enabled = True
+Button7.Enabled = True
+TextBox1.Text = ""
+TextBox2.Text = ""
+TextBox3.Text = ""
+'TextBox4.Text = ""
+Exit Sub
+Else
+j = j - 1
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(total - 1)
+j = total - 1
+End If
+End If
+' Call Form17_Load(sender, e)
+'End If
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Call XDisplay(total - 1)
+j = total - 1
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+Me.Close()
+form21.Show()
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub XDisplay(ByVal A As Long)
+TextBox1.Text = SModelNum(A)
+TextBox2.Text = SProdName(A)
+TextBox3.Text = SProdQuantity(A)
+End Sub
+Private Sub XSave(ByVal A As Long)
+Dim D As Long
+FileOpen(5, "SupplierList.csv", OpenMode.Output)
+For D = 0 To total - 1
+If D <> A Then
+WriteLine(5, SModelNum(D), SProdName(D), SProdQuantity(D), SProdPrice(D))
+End If
+Next
+FileClose(5)
+End Sub
+Private Sub XDisable()
+Button1.Enabled = False
+Button2.Enabled = False
+Button3.Enabled = False
+Button4.Enabled = False
+Button5.Enabled = False
+Button6.Enabled = False
+'Button7.Enabled = False
+'Button8.Enabled = False
+'Button9.Enabled = False
+'Button10.Enabled = False
+End Sub
+End Class
+Public Class Form19
+Private ModelNum() As String
+Private ProdName() As String
+Private ProdQuantity() As String
+Private ProdPrice() As String
+Private i, j, total As Long
+Private Sub Form19_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+i = 0
+Dim a As String
+a = CurDir()
+If System.IO.File.Exists(a & "\ItemsSentToShipper.csv") Then
+If System.IO.File.ReadAllText(a & "\ItemsSentToShipper.csv").Length = 0 Then
+MsgBox("Supplier has not sent items to the Shipper")
+Call XDisable()
+Button6.Enabled = True
+TextBox1.Text = ""
+TextBox2.Text = ""
+TextBox3.Text = ""
+Exit Sub
+Else
+FileOpen(1, "ItemsSentToShipper.csv", OpenMode.Input)
+Do Until EOF(1)
+ReDim Preserve ModelNum(0 To i)
+ReDim Preserve ProdName(0 To i)
+ReDim Preserve ProdQuantity(0 To i)
+Input(1, ModelNum(i))
+Input(1, ProdName(i))
+Input(1, ProdQuantity(i))
+i = i + 1
+Loop
+total = i
+FileClose(1)
+Call XDisplay(0)
+End If
+Else
+MsgBox("Supplier has not sent items to the Shipper")
+Call XDisable()
+Button6.Enabled = True
+Exit Sub
+End If
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(j + 1)
+j = j + 1
+End If
+End Sub
+Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+If j = 0 Then
+Call XDisplay(total - 1)
+j = total - 1
+Else
+Call XDisplay(j - 1)
+j = j - 1
+End If
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Dim K As Long
+Dim Num() As String
+Dim Name() As String
+Dim Quantity() As String
+Dim ShippedItems As String
+FileOpen(2, "ShippedItems.csv", OpenMode.Append)
+WriteLine(2, TextBox1.Text, TextBox2.Text, TextBox3.Text)
+FileClose(2)
+FileOpen(4, "ShippedItems.csv", OpenMode.Input)
+Do Until EOF(4)
+ReDim Preserve Num(0 To K)
+ReDim Preserve Name(0 To K)
+ReDim Preserve Quantity(0 To K)
+Input(4, Num(K))
+Input(4, Name(K))
+Input(4, Quantity(K))
+ShippedItems = ShippedItems & Num(K) & vbTab & Name(K) & vbTab & Quantity(K) & vbNewLine
+K = K + 1
+Loop
+TextBox4.Text = ShippedItems
+FileClose(4)
+Call XSave(j)
+Call Form19_Load(sender, e)
+If i <= 0 Then
+Call XDisable()
+Button6.Enabled = True
+Button7.Enabled = True
+TextBox1.Text = ""
+TextBox2.Text = ""
+TextBox3.Text = ""
+'TextBox4.Text = ""
+Exit Sub
+Else
+j = j - 1
+If j = total - 1 Then
+Call XDisplay(0)
+j = 0
+Else
+Call XDisplay(total - 1)
+j = total - 1
+End If
+End If
+End Sub
+Private Sub XSave(ByVal A As Long)
+Dim D As Long
+FileOpen(5, "ItemsSentToShipper.csv", OpenMode.Output)
+For D = 0 To total - 1
+If D <> A Then
+WriteLine(5, ModelNum(D), ProdName(D), ProdQuantity(D))
+End If
+Next
+FileClose(5)
+End Sub
+Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+Call XDisplay(0)
+j = 0
+End Sub
+Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+Call XDisplay(total - 1)
+j = total - 1
+End Sub
+Private Sub XDisplay(ByVal A As Long)
+TextBox1.Text = ModelNum(A)
+TextBox2.Text = ProdName(A)
+TextBox3.Text = ProdQuantity(A)
+End Sub
+Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+Me.Close()
+Form22.Show()
+End Sub
+Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub XDisable()
+Button1.Enabled = False
+Button2.Enabled = False
+Button3.Enabled = False
+Button4.Enabled = False
+Button5.Enabled = False
+Button6.Enabled = False
+End Sub
+End Class
+Public Class Form20
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+End
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Form20_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+End Sub
+End Class
+Public Class Form21
+Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+End Sub
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+End
+End Sub
+Private Sub Form21_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+End Sub
+End Class
+Public Class Form22
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+Me.Close()
+Form1.Show()
+End Sub
+Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+End
+End Sub
+Private Sub Form22_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+End Sub
+End Class
